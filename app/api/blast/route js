@@ -1,0 +1,30 @@
+import { NextResponse } from 'next/server';
+import makeWASocket, { useMultiFileAuthState } from '@whiskeysockets/baileys';
+
+export async function POST(req) {
+  const { teksJualan, speed, nomorDB } = await req.json();
+  
+  // Ambil sesi yang sudah login
+  const { state } = await useMultiFileAuthState('/tmp/baileys_auth');
+  const sock = makeWASocket({ auth: state });
+
+  let delay = 5000;
+  if (speed === 'fast') delay = 1000;
+  if (speed === 'slow') delay = 10000;
+
+  // Proses Kirim ke setiap nomor
+  // (Peringatan: Vercel akan mematikan proses ini secara paksa jika lebih dari 10 detik)
+  for (let nomor of nomorDB) {
+    nomor = nomor.trim();
+    if (!nomor.includes('@s.whatsapp.net')) nomor = `${nomor}@s.whatsapp.net`;
+    
+    try {
+      await sock.sendMessage(nomor, { text: teksJualan });
+      await new Promise(resolve => setTimeout(resolve, delay));
+    } catch (e) {
+      console.error("Gagal kirim ke", nomor);
+    }
+  }
+
+  return NextResponse.json({ success: true, message: "Pesan terkirim!" });
+}
