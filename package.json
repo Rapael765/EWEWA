@@ -1,0 +1,17 @@
+{
+  "name": "web-jualan-vercel",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@whiskeysockets/baileys": "^6.7.24",
+    "qrcode": "^1.5.3",
+    "pino": "^8.16.2"
+  }
+}
